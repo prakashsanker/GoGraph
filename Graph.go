@@ -22,7 +22,7 @@ func New()(*Graph) {
 	return g
 }
 
-func (g *Graph) addNode() int {
+func (g *Graph) AddNode() int {
 	newId := len(g.nodes) - 1
 	newConnectedIds := make(map[int]bool)
 	newNode := Node{ids: newConnectedIds}
@@ -30,7 +30,7 @@ func (g *Graph) addNode() int {
 	return newId
 }
 
-func (g *Graph) hasNode(id int) (bool, error) {
+func (g *Graph) HasNode(id int) (bool, error) {
 	nodes := g.nodes
 	if id < len(nodes) {
 		//kosher because I'm not implementing removal
@@ -41,12 +41,12 @@ func (g *Graph) hasNode(id int) (bool, error) {
 }
 
 //first few lines could be composed out to a separate function
-func (g *Graph) hasEdge(start int, end int) (bool, error) {
-	hasStartNode, err := g.hasNode(start)
+func (g *Graph) HasEdge(start int, end int) (bool, error) {
+	hasStartNode, err := g.HasNode(start)
 	if err != nil {
 		return false, errors.New("Illegal start node id")
 	}
-	hasEndNode, err := g.hasNode(end) 
+	hasEndNode, err := g.HasNode(end) 
 	if err != nil {
 		return false, errors.New("Illegal end node id")
 	}
@@ -59,13 +59,31 @@ func (g *Graph) hasEdge(start int, end int) (bool, error) {
 	return false, nil
 }
 
+func (g *Graph) NumberOfVertices() int{
+	return len(g.nodes)
+}
+
+func (g *Graph) NumberOfEdges() int{
+	edgeCounter := 0
+	for _, node := range g.nodes {
+		connectedNodes := node.ids
+		edgeCounter += len(connectedNodes)
+	}
+	return edgeCounter
+}
+
+func (g *Graph) Degree(id int) int {
+	node := g.nodes[id]
+	return len(node.ids)
+}
+
 //first few lines could be composed out to a separate function
-func (g *Graph) addEdge(start int, end int) (bool, error) {
-	hasStartNode, err := g.hasNode(start)
+func (g *Graph) AddEdge(start int, end int) (bool, error) {
+	hasStartNode, err := g.HasNode(start)
 	if err != nil {
 		return false, errors.New("Illegal start node id")
 	}
-	hasEndNode, err := g.hasNode(end) 
+	hasEndNode, err := g.HasNode(end) 
 	if err != nil{
 		return false, errors.New("Illegal end node id")
 	}
