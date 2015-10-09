@@ -4,15 +4,13 @@ import (
 	"errors"
 )
 
-//Very simple graph implementation without removal using adjacency list.
-//Represnting nodes as IDs -> needs to be used in conjunction with mapping to show what node values are
-//Node list index is id of each node (which is why removal is not implemented)
-
 type Graph struct {
 	nodes []Node
 }
 
 type Node struct {
+	label string
+	id int
 	ids map[int]bool
 }
 
@@ -22,10 +20,10 @@ func New()(*Graph) {
 	return g
 }
 
-func (g *Graph) AddNode() int {
+func (g *Graph) AddNode(label string, id int) int {
 	newId := len(g.nodes) - 1
 	newConnectedIds := make(map[int]bool)
-	newNode := Node{ids: newConnectedIds}
+	newNode := Node{ids: newConnectedIds, label: label, id: id}
 	g.nodes = append(g.nodes, newNode)
 	return newId
 }
