@@ -69,6 +69,15 @@ func (g *Graph) HasEdge(start int, end int) (bool, error) {
 	return false, nil
 }
 
+func (g* Graph) GetConnectedVertices(id int) (map[int]bool, error) {
+	var connectedNodes map[int]bool
+	node, err := g.GetNode(id)
+	if err != nil {
+		return connectedNodes, err
+	}
+	return node.ids, nil
+}
+
 func (g *Graph) NumberOfVertices() int{
 	return len(g.nodes)
 }

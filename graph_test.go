@@ -5,6 +5,52 @@ import (
 	"fmt"
 	)
 
+type TestGraph struct {
+	nodes []int
+	edges []TestEdge
+}
+
+type TestEdge struct {
+	start int
+	end int
+}
+
+func TestGraphCreation(t *testing.T) {
+	g := New()
+	nVertices := g.NumberOfVertices()
+	nEdges := g.NumberOfEdges()
+	if nVertices != 0 {
+		t.Errorf("Started with %d vertices", nVertices)
+	}
+	if nEdges != 0 {
+		t.Errorf("Started with %d edges", nEdges)
+	}
+}
+
+func TestAddSameEdges(t *testing.T) {
+	nodesToAdd := []struct {
+			label string
+		}{
+			{"1"},
+			{"2"},
+		}
+
+	g := New()
+	for _, node := range nodesToAdd {
+		g.AddNode(node.label)
+	}
+
+	g.AddEdge(0,1)
+	g.AddEdge(0,1)
+	g.AddEdge(0,1)
+
+	nEdges := g.NumberOfEdges()
+	if nEdges != 1 {
+		t.Errorf("Number of edges is one, as expected")
+	}
+
+}
+
 func TestAddEdge(t *testing.T) {
 	nodesToAdd := []struct {
 			label string
@@ -42,6 +88,13 @@ func TestAddEdge(t *testing.T) {
 	expectedNEdges := len(nodesToAdd)*len(nodesToAdd)
 	if nEdges !=  expectedNEdges {
 		t.Errorf("Graph does not have edge for every node - number of edges is %d, when %d is expected", nEdges, expectedNEdges)
+	}
+
+	for i, _ := range nodesToAdd {
+		degree := g.Degree(i)
+		if degree != len(nodesToAdd) {
+			t.Errorf("Edge with id %d does not have expected degree %d", i, 6)
+		}
 	}
 }
 
