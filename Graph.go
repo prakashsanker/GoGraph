@@ -16,22 +16,34 @@ type Node struct {
 
 func New()(*Graph) {
 	g := new(Graph)
-	g.nodes = make([]Node, 5)
+	g.nodes = make([]Node, 0)
 	return g
 }
 
-func (g *Graph) AddNode(label string, id int) int {
+func (g *Graph) AddNode(label string) int {
 	newId := len(g.nodes) - 1
 	newConnectedIds := make(map[int]bool)
-	newNode := Node{ids: newConnectedIds, label: label, id: id}
+	newNode := Node{ids: newConnectedIds, label: label, id: newId}
 	g.nodes = append(g.nodes, newNode)
 	return newId
+}
+
+func (g *Graph) GetNode(id int) (Node, error) {
+	hasNode, err := g.HasNode(id)
+	var node Node
+	if err != nil {
+		return node, err
+	}
+
+	if (hasNode) {
+		node = g.nodes[id]
+	}
+	return node, nil
 }
 
 func (g *Graph) HasNode(id int) (bool, error) {
 	nodes := g.nodes
 	if id < len(nodes) {
-		//kosher because I'm not implementing removal
 		return true, nil
 	} else {
 		return false, errors.New("Node id not in graph")
