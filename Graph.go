@@ -5,26 +5,28 @@ import (
 )
 
 type Graph struct {
-	nodes []Node
+	Nodes []Node
 }
 
 type Node struct {
-	label string
-	id int
-	ids map[int]bool
+	Label string
+	Id int
+	Visited bool
+	Ids map[int]bool
 }
+
 
 func New()(*Graph) {
 	g := new(Graph)
-	g.nodes = make([]Node, 0)
+	g.Nodes = make([]Node, 0)
 	return g
 }
 
 func (g *Graph) AddNode(label string) int {
-	newId := len(g.nodes) - 1
+	newId := len(g.Nodes) - 1
 	newConnectedIds := make(map[int]bool)
-	newNode := Node{ids: newConnectedIds, label: label, id: newId}
-	g.nodes = append(g.nodes, newNode)
+	newNode := Node{Ids: newConnectedIds, Label: label, Id: newId, Visited: false}
+	g.Nodes = append(g.Nodes, newNode)
 	return newId
 }
 
@@ -36,14 +38,18 @@ func (g *Graph) GetNode(id int) (Node, error) {
 	}
 
 	if (hasNode) {
-		node = g.nodes[id]
+		node = g.Nodes[id]
 	}
 	return node, nil
 }
 
+func (g *Graph) GetNodes() []Node {
+	return g.Nodes;
+}
+
 func (g *Graph) HasNode(id int) (bool, error) {
-	nodes := g.nodes
-	if id < len(nodes) {
+	Nodes := g.Nodes
+	if id < len(Nodes) {
 		return true, nil
 	} else {
 		return false, errors.New("Node id not in graph")
@@ -61,8 +67,8 @@ func (g *Graph) HasEdge(start int, end int) (bool, error) {
 		return false, errors.New("Illegal end node id")
 	}
 	if hasStartNode && hasEndNode {
-		nodes := g.nodes
-		connectedNodes := nodes[start].ids
+		Nodes := g.Nodes
+		connectedNodes := Nodes[start].Ids
 		_, ok := connectedNodes[end]
 		return ok, nil
 	}
@@ -75,25 +81,25 @@ func (g* Graph) GetConnectedVertices(id int) (map[int]bool, error) {
 	if err != nil {
 		return connectedNodes, err
 	}
-	return node.ids, nil
+	return node.Ids, nil
 }
 
 func (g *Graph) NumberOfVertices() int{
-	return len(g.nodes)
+	return len(g.Nodes)
 }
 
 func (g *Graph) NumberOfEdges() int{
 	edgeCounter := 0
-	for _, node := range g.nodes {
-		connectedNodes := node.ids
+	for _, node := range g.Nodes {
+		connectedNodes := node.Ids
 		edgeCounter += len(connectedNodes)
 	}
 	return edgeCounter
 }
 
 func (g *Graph) Degree(id int) int {
-	node := g.nodes[id]
-	return len(node.ids)
+	node := g.Nodes[id]
+	return len(node.Ids)
 }
 
 //first few lines could be composed out to a separate function
@@ -107,13 +113,25 @@ func (g *Graph) AddEdge(start int, end int) (bool, error) {
 		return false, errors.New("Illegal end node id")
 	}
 	if hasEndNode && hasStartNode {
-		nodes := g.nodes
-		connectedNodes := nodes[start].ids
+		Nodes := g.Nodes
+		connectedNodes := Nodes[start].Ids
 		connectedNodes[end] = true
 		return true, nil
 	}
 	return false, nil
 }
+
+
+//can I pass in a function for topological sort? makes it much more reusable
+func (g *Graph) DepthFirstSearch(id int, sortedOrder []int) {
+	node, _ := g.GetNode(id)
+	node.Visited = true
+	connected := node.Ids
+	for connectedNodeId, _ := range connected {
+		g.DepthFirstSearch(connectedNodeId, sortedOrder)
+	}
+	sortedOrder = append(sortedOrder, id)
+} 
 
 
 
