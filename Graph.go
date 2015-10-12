@@ -2,7 +2,7 @@ package graph
 
 import (
 	"errors"
-	"fmt"
+	// "fmt"
 )
 
 type Graph struct {
@@ -13,6 +13,7 @@ type Node struct {
 	Label string
 	Id int
 	Visited bool
+	TimesVisited int
 	Ids map[int]bool
 }
 
@@ -29,7 +30,7 @@ var count int
 func (g *Graph) AddNode(label string) int {
 	newId := len(g.Nodes)
 	newConnectedIds := make(map[int]bool)
-	newNode := Node{Ids: newConnectedIds, Label: label, Id: newId, Visited: false}
+	newNode := Node{Ids: newConnectedIds, Label: label, Id: newId, Visited: false, TimesVisited: 0}
 	g.Nodes = append(g.Nodes, newNode)
 	count++
 	return newId
@@ -127,19 +128,33 @@ func (g *Graph) AddEdge(start int, end int) (bool, error) {
 }
 
 
+func (g *Graph)HasCycle(id int) bool {
+	node, _ := g.GetNode(id)
+	node.TimesVisited = node.TimesVisited + 1
+	if (node.TimesVisited > 1) {
+		return true
+	}
+	g.Nodes[id] = node
+	for connectedNodeId, _ := range connected {
+		connectedNode, _ := g.GetNode(connectedNodeId)
+		if g.HasCycle(connectedNodeId) {
+			return true
+		}
+	}
+	return false
+}
+
 
 //can I pass in a function for topological sort? makes it much more reusable
-func (g *Graph) DepthFirstSearch(id int, sortedOrder map[int]Node) {
+func (g *Graph) TopologicalSort(id int, sortedOrder map[int]Node) {
 	node, _ := g.GetNode(id)
 	node.Visited = true
 	connected := node.Ids
 	g.Nodes[id] = node
 	for connectedNodeId, _ := range connected {
 		connectedNode, _ := g.GetNode(connectedNodeId)
-		fmt.Println("connected node")
-		fmt.Println(connectedNode)
 		if connectedNode.Visited == false {
-			g.DepthFirstSearch(connectedNodeId, sortedOrder)
+			g.TopologicalSort(connectedNodeId, sortedOrder)
 		}
 	}
 	sortedOrder[count] = node
