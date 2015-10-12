@@ -128,16 +128,16 @@ func (g *Graph) AddEdge(start int, end int) (bool, error) {
 }
 
 
-func (g *Graph)HasCycle(id int) bool {
+func (g *Graph)HasCycle(id int, visited map[int]bool) bool {
 	node, _ := g.GetNode(id)
-	node.TimesVisited = node.TimesVisited + 1
-	if (node.TimesVisited > 1) {
+	if visited[node.Id] == true {
 		return true
 	}
+	visited[node.Id] = true
+	connected := node.Ids
 	g.Nodes[id] = node
 	for connectedNodeId, _ := range connected {
-		connectedNode, _ := g.GetNode(connectedNodeId)
-		if g.HasCycle(connectedNodeId) {
+		if g.HasCycle(connectedNodeId, visited) == true {
 			return true
 		}
 	}
