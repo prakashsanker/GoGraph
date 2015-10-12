@@ -27,6 +27,7 @@ func TestGraphCreation(t *testing.T) {
 	}
 }
 
+
 func TestAddSameEdges(t *testing.T) {
 	nodesToAdd := []struct {
 			label string
@@ -124,8 +125,8 @@ func TestAddAndGetNode(t *testing.T) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			if node.id != i && node.label != c.label {
-				t.Errorf("Graph has node with id %d and label %s at id %d", node.id, node.label, i)
+			if node.Id != i && node.Label != c.label {
+				t.Errorf("Graph has node with id %d and label %s at id %d", node.Id, node.Label, i)
 			}
 		}
 }
