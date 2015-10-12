@@ -128,11 +128,15 @@ func (g *Graph) DepthFirstSearch(id int, sortedOrder *[]int) {
 	node, _ := g.GetNode(id)
 	node.Visited = true
 	connected := node.Ids
+	g.Nodes[id] = node
 	for connectedNodeId, _ := range connected {
-		g.DepthFirstSearch(connectedNodeId, sortedOrder)
+		connectedNode, _ := g.GetNode(id)
+		if connectedNode.Visited == false {
+			g.DepthFirstSearch(connectedNodeId, sortedOrder)
+		}
 	}
 	*sortedOrder = append(*sortedOrder,id)
 } 
 
-
+//precalc, algebra2, algebra1, geometry
 
