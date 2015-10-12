@@ -2,6 +2,7 @@ package graph
 
 import (
 	"errors"
+	// "fmt"
 )
 
 type Graph struct {
@@ -23,7 +24,7 @@ func New()(*Graph) {
 }
 
 func (g *Graph) AddNode(label string) int {
-	newId := len(g.Nodes) - 1
+	newId := len(g.Nodes)
 	newConnectedIds := make(map[int]bool)
 	newNode := Node{Ids: newConnectedIds, Label: label, Id: newId, Visited: false}
 	g.Nodes = append(g.Nodes, newNode)
@@ -123,14 +124,14 @@ func (g *Graph) AddEdge(start int, end int) (bool, error) {
 
 
 //can I pass in a function for topological sort? makes it much more reusable
-func (g *Graph) DepthFirstSearch(id int, sortedOrder []int) {
+func (g *Graph) DepthFirstSearch(id int, sortedOrder *[]int) {
 	node, _ := g.GetNode(id)
 	node.Visited = true
 	connected := node.Ids
 	for connectedNodeId, _ := range connected {
 		g.DepthFirstSearch(connectedNodeId, sortedOrder)
 	}
-	sortedOrder = append(sortedOrder, id)
+	*sortedOrder = append(*sortedOrder,id)
 } 
 
 
