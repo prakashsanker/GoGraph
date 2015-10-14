@@ -20,7 +20,6 @@ type Node struct {
 // Private Properties
 
 var visited map[int]bool
-var sortedOrder map[int]Node
 var count int
 var seenNodes map[int]Node
 
@@ -167,7 +166,7 @@ func (g *Graph) HasCycle() bool {
 
 func (g *Graph) TopologicalSort() map[int]Node {
 	visited = make(map[int]bool)
-	sortedOrder = make(map[int]Node)
+	sortedOrder := make(map[int]Node)
 	for _, vertex := range g.Nodes {
 		if visited[vertex.Id] != true {
 			g.topologicalSort(vertex.Id, sortedOrder)
