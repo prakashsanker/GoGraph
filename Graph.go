@@ -127,26 +127,53 @@ func (g *Graph) AddEdge(start int, end int) (bool, error) {
 	return false, nil
 }
 
+var visited map[int]bool
+var recursiveStack map[int]bool
+var sortedOrder map[int]Node
 
-func (g *Graph)HasCycle(id int, visited map[int]bool) bool {
+
+func (g *Graph)hasCycle(id int, visited map[int]bool, recursiveStack map[int]bool) bool {
 	node, _ := g.GetNode(id)
-	if visited[node.Id] == true {
-		return true
+	if visited[node.Id] == false {
+		visited[node.Id] = true
+		recursiveStack[node.Id] = true
+		connected := node.Ids
+		g.Nodes[id] = node
+		for connectedNodeId, _ := range connected {
+			if visited[connectedNodeId] == false && g.hasCycle(connectedNodeId, visited, recursiveStack) {
+				return true
+			} else if recursiveStack[connectedNodeId] == true {
+				return true
+			}
+		}
 	}
-	visited[node.Id] = true
-	connected := node.Ids
-	g.Nodes[id] = node
-	for connectedNodeId, _ := range connected {
-		if g.HasCycle(connectedNodeId, visited) == true {
+	recursiveStack[node.Id] = false
+	return false
+}
+
+func (g *Graph) HasCycle() bool {
+	for _, node := range g.Nodes {
+		visited = make(map[int]bool)
+		recursiveStack = make(map[int]bool)
+		if (g.hasCycle(node.Id, visited, recursiveStack)) {
 			return true
 		}
 	}
 	return false
 }
 
+func (g *Graph) TopologicalSort() map[int]Node {
+	visited = make(map[int]bool)
+	sortedOrder = make(map[int]Node)
+	for _, vertex := range g.Nodes {
+		if visited[vertex.Id] != true {
+			g.topologicalSort(vertex.Id, sortedOrder)
+		}
+	}
+	return sortedOrder
+}
 
-//can I pass in a function for topological sort? makes it much more reusable
-func (g *Graph) TopologicalSort(id int, sortedOrder map[int]Node) {
+func (g *Graph) topologicalSort(id int, sortedOrder map[int]Node) {
 	node, _ := g.GetNode(id)
 	node.Visited = true
 	connected := node.Ids
@@ -154,7 +181,7 @@ func (g *Graph) TopologicalSort(id int, sortedOrder map[int]Node) {
 	for connectedNodeId, _ := range connected {
 		connectedNode, _ := g.GetNode(connectedNodeId)
 		if connectedNode.Visited == false {
-			g.TopologicalSort(connectedNodeId, sortedOrder)
+			g.topologicalSort(connectedNodeId, sortedOrder)
 		}
 	}
 	sortedOrder[count] = node

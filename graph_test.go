@@ -28,6 +28,78 @@ func TestGraphCreation(t *testing.T) {
 }
 
 
+func TestGraphCycleDetection(t *testing.T) {
+	nodesToAdd := []string{"1","2","3","4"}
+
+	g := New()
+	for _, node := range nodesToAdd {
+		g.AddNode(node)
+	}
+	g.AddEdge(0, 1)
+	g.AddEdge(1,2)
+	g.AddEdge(2,3)
+	g.AddEdge(3, 0)
+
+	visited := make(map[int]bool)
+	if g.HasCycle(0,visited) == false {
+		t.Errorf("Graph does not have cycle, when it does")
+	}
+
+
+	g = New()
+	for _, node := range nodesToAdd {
+		g.AddNode(node)
+	}
+
+	//Disconnected graph cycle detection
+	g.AddEdge(0, 1)
+	g.AddEdge(1, 0)
+	g.AddEdge(2, 3)
+	g.AddEdge(3, 2)
+
+	vertices := g.GetNodes()
+	hasCycle := false
+
+	for _, vertex := range vertices {
+		if visited[vertex.Id] == false {
+			if g.HasCycle(vertex.Id, visited) == true {
+				hasCycle = true
+				break
+			}
+		}
+	}
+
+	if hasCycle == false {
+		t.Errorf("HasCycle returns false, when it should return true as graph has cycle")
+	}
+
+
+//Multiple forward edges to one node test
+
+
+// 	g := New()
+// 	visited := make(map[int]bool)
+
+// 	// g = New()
+
+// 	for _, node := range nodesToAdd {
+// 		g.AddNode(node)
+// 	}
+
+
+// //1 2
+// 	g.AddEdge(0,1)
+// 	g.AddEdge(1,2)
+// 	g.AddEdge(0,2)
+// 	g.AddEdge(2,3)
+
+// 	visited = make(map[int]bool)
+// 	if g.HasCycle(0, visited) == true {
+// 		t.Errorf("Graph has cycle, when it does not")
+// 	}
+}
+
+
 func TestAddSameEdges(t *testing.T) {
 	nodesToAdd := []struct {
 			label string
