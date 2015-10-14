@@ -2,7 +2,6 @@ package graph
 
 import (
 	"errors"
-	// "fmt"
 )
 
 // Data Structures
@@ -19,17 +18,13 @@ type Node struct {
 
 // Private Properties
 
-var visited map[int]bool
 var count int
-var seenNodes map[int]Node
-
 
 func New()(*Graph) {
 	g := new(Graph)
 	g.Nodes = make([]Node, 0)
 	return g
 }
-
 
 func (g *Graph) AddNode(label string) int {
 	newId := len(g.Nodes)
@@ -152,7 +147,7 @@ func (g *Graph)hasCycle(id int, visited map[int]bool, nodesInSearch map[int]bool
 func (g *Graph) HasCycle() bool {
 	seenNodes := make(map[int]bool)
 	for _, node := range g.Nodes {
-		visited = make(map[int]bool)
+		visited := make(map[int]bool)
 		nodesInSearch := make(map[int]bool)
 		if seenNodes[node.Id] != true {
 			if (g.hasCycle(node.Id, visited, nodesInSearch, seenNodes)) {
@@ -163,19 +158,18 @@ func (g *Graph) HasCycle() bool {
 	return false
 }
 
-
 func (g *Graph) TopologicalSort() map[int]Node {
-	visited = make(map[int]bool)
+	visited := make(map[int]bool)
 	sortedOrder := make(map[int]Node)
 	for _, vertex := range g.Nodes {
 		if visited[vertex.Id] != true {
-			g.topologicalSort(vertex.Id, sortedOrder)
+			g.topologicalSort(vertex.Id, sortedOrder, visited)
 		}
 	}
 	return sortedOrder
 }
 
-func (g *Graph) topologicalSort(id int, sortedOrder map[int]Node) {
+func (g *Graph) topologicalSort(id int, sortedOrder map[int]Node, visited map[int]bool) {
 	node, _ := g.GetNode(id)
 	visited[node.Id] = true
 	connected := node.Ids
@@ -183,7 +177,7 @@ func (g *Graph) topologicalSort(id int, sortedOrder map[int]Node) {
 	for connectedNodeId, _ := range connected {
 		connectedNode, _ := g.GetNode(connectedNodeId)
 		if visited[connectedNode.Id] == false {
-			g.topologicalSort(connectedNodeId, sortedOrder)
+			g.topologicalSort(connectedNodeId, sortedOrder, visited)
 		}
 	}
 	sortedOrder[count] = node
