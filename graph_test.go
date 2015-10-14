@@ -27,14 +27,19 @@ func TestGraphCreation(t *testing.T) {
 	}
 }
 
+func addNodes(labels []string, g *Graph) {
+	for _, node := range labels {
+		g.AddNode(node)
+	}
+}
+
 
 func TestGraphCycleDetection(t *testing.T) {
 	nodesToAdd := []string{"1","2","3","4"}
 
 	g := New()
-	for _, node := range nodesToAdd {
-		g.AddNode(node)
-	}
+	addNodes(nodesToAdd, g)
+
 	g.AddEdge(0, 1)
 	g.AddEdge(1,2)
 	g.AddEdge(2,3)
@@ -46,9 +51,7 @@ func TestGraphCycleDetection(t *testing.T) {
 
 
 	g = New()
-	for _, node := range nodesToAdd {
-		g.AddNode(node)
-	}
+	addNodes(nodesToAdd, g)
 
 	//Disconnected graph cycle detection
 	g.AddEdge(0, 1)
@@ -62,12 +65,9 @@ func TestGraphCycleDetection(t *testing.T) {
 
 
 	// Multiple forward edges to one node test
-
-
 		g = New()
-		for _, node := range nodesToAdd {
-			g.AddNode(node)
-		}
+		addNodes(nodesToAdd, g)
+
 
 		g.AddEdge(0,1)
 		g.AddEdge(1,2)
@@ -76,6 +76,21 @@ func TestGraphCycleDetection(t *testing.T) {
 
 		if g.HasCycle() == true {
 			t.Errorf("Graph has cycle, when it does not")
+		}
+
+	// Graph with self loops
+
+		g = New()
+		addNodes(nodesToAdd, g)
+
+
+		g.AddEdge(0,0)
+		g.AddEdge(1,1)
+		g.AddEdge(2,2)
+		g.AddEdge(3,3)
+
+		if g.HasCycle() == false {
+			t.Errorf("HasCycle returns false when it should return true, as nodes have edges to themselves")
 		}
 }
 
