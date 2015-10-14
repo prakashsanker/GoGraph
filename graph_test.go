@@ -33,6 +33,15 @@ func addNodes(labels []string, g *Graph) {
 	}
 }
 
+func TestToplogicalSort(t *testing.T) {
+	nodesToAdd := []string{"1","2","3","4"}
+
+	g := New()
+	addNodes(nodesToAdd, g)
+
+	
+}
+
 
 func TestGraphCycleDetection(t *testing.T) {
 	nodesToAdd := []string{"1","2","3","4"}

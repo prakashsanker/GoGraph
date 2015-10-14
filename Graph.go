@@ -12,8 +12,6 @@ type Graph struct {
 type Node struct {
 	Label string
 	Id int
-	Visited bool
-	TimesVisited int
 	Ids map[int]bool
 }
 
@@ -30,7 +28,7 @@ var count int
 func (g *Graph) AddNode(label string) int {
 	newId := len(g.Nodes)
 	newConnectedIds := make(map[int]bool)
-	newNode := Node{Ids: newConnectedIds, Label: label, Id: newId, Visited: false, TimesVisited: 0}
+	newNode := Node{Ids: newConnectedIds, Label: label, Id: newId}
 	g.Nodes = append(g.Nodes, newNode)
 	count++
 	return newId
