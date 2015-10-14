@@ -3,6 +3,7 @@ package graph
 import (
 	"testing"
 	"fmt"
+	"reflect"
 	)
 
 type TestGraph struct {
@@ -31,6 +32,45 @@ func addNodes(labels []string, g *Graph) {
 	for _, node := range labels {
 		g.AddNode(node)
 	}
+}
+
+func checkOrdering(g *Graph, orderings [][]int, t *testing.T){
+	sortedOrder := g.TopologicalSort()
+	var sortedIds []int
+	i := 1
+	for i <= len(g.Nodes) {
+		sortedIds = append(sortedIds, sortedOrder[i].Id)
+		i++
+	}
+	hasOrdering := false
+	for _, ordering := range orderings {
+		if reflect.DeepEqual(ordering, sortedIds) == true {
+			hasOrdering = true
+			break
+		}
+	}
+
+	if hasOrdering == false {
+		t.Errorf("Ordering of is wrong")
+		fmt.Println(sortedIds)
+	}
+}
+
+
+func TestTopologicalSort(t *testing.T) {
+	nodesToAdd := []string{"1","2","3","4"}
+	orderings := [][]int{[]int{0,1,2,3}, []int{1,0,2,3}}
+
+
+	g := New()
+	addNodes(nodesToAdd, g)
+
+	g.AddEdge(0,2)
+	g.AddEdge(1,2)
+	g.AddEdge(2,3)
+
+	checkOrdering(g, orderings, t)
+
 }
 
 func TestGraphCycleDetection(t *testing.T) {
