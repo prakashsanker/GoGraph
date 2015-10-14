@@ -94,6 +94,15 @@ func TestTopologicalSort(t *testing.T) {
 	addNodes([]string{"1","2"}, g)
 	orderings = [][]int{[]int{0,1}, []int{1,0}}
 	checkOrdering(g, orderings, t)
+
+	//Multiple nodes feed into one node
+	g = New()
+	addNodes(nodesToAdd, g)
+	g.AddEdge(0,3)
+	g.AddEdge(1,3)
+	g.AddEdge(2,3)
+	orderings = [][]int{[]int{0,1,2,3}, []int{1,0,2,3}, []int{2,1,0,3}, []int{1,2,0,3}}
+
 }
 
 func TestGraphCycleDetection(t *testing.T) {

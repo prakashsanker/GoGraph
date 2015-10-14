@@ -54,10 +54,6 @@ func (g *Graph) GetNode(id int) (Node, error) {
 	return node, nil
 }
 
-func (g *Graph) GetNodes() []Node {
-	return g.Nodes;
-}
-
 func (g *Graph) HasNode(id int) (bool, error) {
 	Nodes := g.Nodes
 	if id < len(Nodes) {
