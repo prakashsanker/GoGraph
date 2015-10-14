@@ -51,7 +51,7 @@ func checkOrdering(g *Graph, orderings [][]int, t *testing.T){
 	}
 
 	if hasOrdering == false {
-		t.Errorf("Ordering of is wrong")
+		t.Errorf("Ordering is wrong")
 		fmt.Println(sortedIds)
 	}
 }
@@ -89,6 +89,11 @@ func TestTopologicalSort(t *testing.T) {
 	orderings= [][]int{[]int{0,1,2,3}}
 	checkOrdering(g, orderings, t)
 
+	//No edges
+	g = New()
+	addNodes([]string{"1","2"}, g)
+	orderings = [][]int{[]int{0,1}, []int{1,0}}
+	checkOrdering(g, orderings, t)
 }
 
 func TestGraphCycleDetection(t *testing.T) {
