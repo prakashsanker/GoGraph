@@ -175,12 +175,12 @@ func (g *Graph) TopologicalSort() map[int]Node {
 
 func (g *Graph) topologicalSort(id int, sortedOrder map[int]Node) {
 	node, _ := g.GetNode(id)
-	node.Visited = true
+	visited[node.Id] = true
 	connected := node.Ids
 	g.Nodes[id] = node
 	for connectedNodeId, _ := range connected {
 		connectedNode, _ := g.GetNode(connectedNodeId)
-		if connectedNode.Visited == false {
+		if visited[connectedNode.Id] == false {
 			g.topologicalSort(connectedNodeId, sortedOrder)
 		}
 	}
