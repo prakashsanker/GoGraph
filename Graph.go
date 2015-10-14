@@ -5,6 +5,8 @@ import (
 	// "fmt"
 )
 
+// Data Structures
+
 type Graph struct {
 	Nodes []Node
 }
@@ -15,14 +17,19 @@ type Node struct {
 	Ids map[int]bool
 }
 
+// Private Properties
+
+var visited map[int]bool
+var sortedOrder map[int]Node
+var count int
+var seenNodes map[int]Node
+
 
 func New()(*Graph) {
 	g := new(Graph)
 	g.Nodes = make([]Node, 0)
 	return g
 }
-
-var count int
 
 
 func (g *Graph) AddNode(label string) int {
@@ -125,40 +132,42 @@ func (g *Graph) AddEdge(start int, end int) (bool, error) {
 	return false, nil
 }
 
-var visited map[int]bool
-var recursiveStack map[int]bool
-var sortedOrder map[int]Node
 
-
-func (g *Graph)hasCycle(id int, visited map[int]bool, recursiveStack map[int]bool) bool {
+func (g *Graph)hasCycle(id int, visited map[int]bool, nodesInSearch map[int]bool, seenNodes map[int]bool) bool {
 	node, _ := g.GetNode(id)
 	if visited[node.Id] == false {
 		visited[node.Id] = true
-		recursiveStack[node.Id] = true
+		seenNodes[node.Id] = true
+		nodesInSearch[node.Id] = true
 		connected := node.Ids
 		g.Nodes[id] = node
 		for connectedNodeId, _ := range connected {
-			if visited[connectedNodeId] == false && g.hasCycle(connectedNodeId, visited, recursiveStack) {
+			if visited[connectedNodeId] == false && g.hasCycle(connectedNodeId, visited, nodesInSearch, seenNodes) {
 				return true
-			} else if recursiveStack[connectedNodeId] == true {
+			} else if nodesInSearch[connectedNodeId] == true {
 				return true
 			}
 		}
 	}
-	recursiveStack[node.Id] = false
+	
+	nodesInSearch[node.Id] = false
 	return false
 }
 
 func (g *Graph) HasCycle() bool {
+	seenNodes := make(map[int]bool)
 	for _, node := range g.Nodes {
 		visited = make(map[int]bool)
-		recursiveStack = make(map[int]bool)
-		if (g.hasCycle(node.Id, visited, recursiveStack)) {
-			return true
+		nodesInSearch := make(map[int]bool)
+		if seenNodes[node.Id] != true {
+			if (g.hasCycle(node.Id, visited, nodesInSearch, seenNodes)) {
+				return true
+			}
 		}
 	}
 	return false
 }
+
 
 func (g *Graph) TopologicalSort() map[int]Node {
 	visited = make(map[int]bool)
