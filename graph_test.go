@@ -71,6 +71,24 @@ func TestTopologicalSort(t *testing.T) {
 
 	checkOrdering(g, orderings, t)
 
+	//Disconnected graph
+	g = New()
+	addNodes(nodesToAdd, g)
+	g.AddEdge(0,1)
+	g.AddEdge(2,3)
+	orderings = [][]int{[]int{0,1,2,3}, []int{2,3,0,1}}
+	checkOrdering(g, orderings, t)
+
+	//Alternative paths
+	g = New()
+	addNodes(nodesToAdd, g)
+	g.AddEdge(0,1)
+	g.AddEdge(1,2)
+	g.AddEdge(0,2)
+	g.AddEdge(2,3)
+	orderings= [][]int{[]int{0,1,2,3}}
+	checkOrdering(g, orderings, t)
+
 }
 
 func TestGraphCycleDetection(t *testing.T) {
